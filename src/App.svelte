@@ -2,7 +2,6 @@
   import { currentUser } from "./lib/pocketbase";
   import Login from "./lib/Login.svelte";
   import Messages from "./lib/Message.svelte";
-  import ChatBox from "./lib/chatbox.svelte";
 </script>
 
 <h1>PocketChat</h1>
@@ -10,5 +9,4 @@
 
 {#if $currentUser}
   <Messages />
-  <!-- <ChatBox /> -->
 {/if}
