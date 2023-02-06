@@ -1,9 +1,11 @@
 <script lang="ts">
-  import { onMount, onDestroy } from "svelte";
+  import { onMount, onDestroy, afterUpdate } from "svelte";
   import { currentUser, pb } from "./pocketbase";
+  import Bubble from "./bubble.svelte";
 
   let messages = [];
   let newMessage: string;
+  let messageContainer;
   let unsubscribe: () => void;
   onMount(async () => {
     const resultList = await pb.collection("messages").getList(1, 50, {
@@ -32,6 +34,14 @@
     unsubscribe();
   });
 
+  afterUpdate(() => {
+    scrollToBottom(messageContainer);
+  });
+
+  const scrollToBottom = async (node) => {
+    node.scroll({ top: node.scrollHeight, behavior: "smooth" });
+  };
+
   async function sendMessage() {
     const data = {
       text: newMessage,
@@ -41,26 +51,45 @@
   }
 </script>
 
-<div class="messages">
-  {#each messages as msg (msg.id)}
-    <div class="msg">
-      <img
-        class="avatar"
-        src={`https://avatars.dicebear.com/api/identicon/${msg.expand?.user?.username}.svg`}
-        alt="avatar"
-        width="40px"
-      />
-      <div>
-        <small>
-          Sent by @{msg.expand?.user?.username}
-        </small>
-        <p class="msg-text">{msg.text}</p>
-      </div>
+<div class="container">
+  <div class="chatbox">
+    <div bind:this={messageContainer} class="message-container">
+      {#each messages as message}
+        <Bubble {message} />
+      {/each}
     </div>
-  {/each}
+  </div>
 </div>
 
 <form on:submit|preventDefault={sendMessage}>
   <input type="text" placeholder="Message" bind:value={newMessage} />
   <button type="submit">Send it!</button>
 </form>
+
+<style>
+  .message-container {
+    overflow-y: scroll;
+    height: 25rem;
+  }
+
+  .toptext {
+    background-color: rgb(250, 144, 23);
+    color: white;
+    text-align: center;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    margin-bottom: 0;
+  }
+
+  .chatbox {
+    width: 20rem;
+    margin: auto;
+    border-radius: 0.5rem;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    background-color: black;
+  }
+
+  .container {
+    width: 100%;
+  }
+</style>
