@@ -72,15 +72,6 @@
     height: 25rem;
   }
 
-  .toptext {
-    background-color: rgb(250, 144, 23);
-    color: white;
-    text-align: center;
-    border-top-left-radius: 0.5rem;
-    border-top-right-radius: 0.5rem;
-    margin-bottom: 0;
-  }
-
   .chatbox {
     width: 20rem;
     margin: auto;
